@@ -2,7 +2,7 @@
 
 ## Project info
 
-**URL**: https://lovable.dev/projects/4690fb02-559a-4496-8d09-70441f667888
+published link:https://easy-user-crud.lovable.app/
 
 
 ## What technologies are used for this project?
