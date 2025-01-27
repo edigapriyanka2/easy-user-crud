@@ -38,12 +38,11 @@ export default function Index() {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const queryClient = useQueryClient();
 
-  // Fetch users with stale time set to 0 to always get fresh data
   const { data: users = [], isLoading } = useQuery({
     queryKey: ["users"],
     queryFn: fetchUsers,
-    staleTime: 0, // This ensures we always get fresh data
-    refetchOnWindowFocus: true, // Refetch when window regains focus
+    staleTime: 0,
+    refetchOnWindowFocus: true,
   });
 
   const createUserMutation = useMutation({
@@ -74,12 +73,9 @@ export default function Index() {
   const deleteUserMutation = useMutation({
     mutationFn: deleteUser,
     onSuccess: (_, deletedUserId) => {
-      // Update the cache to remove the deleted user
       queryClient.setQueryData(["users"], (oldData: User[] | undefined) => {
         return oldData ? oldData.filter(user => user.id !== deletedUserId) : [];
       });
-      // Also invalidate the query to ensure sync with server
-      queryClient.invalidateQueries({ queryKey: ["users"] });
       toast.success("User deleted successfully");
     },
     onError: () => {

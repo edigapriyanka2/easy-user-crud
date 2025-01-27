@@ -9,12 +9,17 @@ export interface User {
 
 const BASE_URL = 'https://jsonplaceholder.typicode.com/users';
 
+// Keep track of deleted users locally since JSONPlaceholder doesn't actually delete
+const deletedUserIds = new Set<number>();
+
 export const fetchUsers = async (): Promise<User[]> => {
   const response = await fetch(BASE_URL);
   if (!response.ok) {
     throw new Error('Failed to fetch users');
   }
-  return response.json();
+  const users = await response.json();
+  // Filter out any previously deleted users
+  return users.filter((user: User) => !deletedUserIds.has(user.id));
 };
 
 export const createUser = async (userData: Omit<User, 'id'>): Promise<User> => {
@@ -52,4 +57,6 @@ export const deleteUser = async (id: number): Promise<void> => {
   if (!response.ok) {
     throw new Error('Failed to delete user');
   }
+  // Add the deleted user ID to our local set
+  deletedUserIds.add(id);
 };
