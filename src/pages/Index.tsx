@@ -68,8 +68,11 @@ export default function Index() {
 
   const deleteUserMutation = useMutation({
     mutationFn: deleteUser,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["users"] });
+    onSuccess: (_, deletedUserId) => {
+      // Immediately update the cache to remove the deleted user
+      queryClient.setQueryData(["users"], (oldData: User[] | undefined) => {
+        return oldData ? oldData.filter(user => user.id !== deletedUserId) : [];
+      });
       toast.success("User deleted successfully");
     },
     onError: () => {
