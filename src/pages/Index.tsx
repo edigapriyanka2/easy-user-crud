@@ -45,8 +45,11 @@ export default function Index() {
 
   const createUserMutation = useMutation({
     mutationFn: createUser,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["users"] });
+    onSuccess: (newUser) => {
+      // Immediately update the cache to add the new user
+      queryClient.setQueryData(["users"], (oldData: User[] | undefined) => {
+        return oldData ? [...oldData, newUser] : [newUser];
+      });
       toast.success("User created successfully");
     },
     onError: () => {
